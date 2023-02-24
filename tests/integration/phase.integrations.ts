@@ -57,4 +57,36 @@ describe('Phases', () => {
         });
     });
   });
+
+  describe('Create phase', () => {
+    it('should create a phase successfully', (done) => {
+      request(app)
+        .post('/api/v1/phases')
+        .set('Accept', 'application/json')
+        .send({
+          name: 'New-Phase',
+        })
+        .end((req, res) => {
+          expect(res.statusCode).to.be.equal(201);
+          expect(res.body.code).to.be.equal(201);
+          expect(res.body.status).to.be.equal('success');
+          expect(res.body.message).to.be.equal('Phase created successfully');
+          expect(res.body).to.have.property('data');
+          done();
+        });
+    });
+
+    it('should throw error for missing fields', (done) => {
+      request(app)
+        .post('/api/v1/phases')
+        .set('Accept', 'application/json')
+        .end((req, res) => {
+          expect(res.statusCode).to.be.equal(400);
+          expect(res.body.code).to.be.equal(400);
+          expect(res.body.status).to.be.equal('error');
+          expect(res.body.message).to.be.equal('name is required');
+          done();
+        });
+    });
+  });
 });
