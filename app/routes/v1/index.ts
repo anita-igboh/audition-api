@@ -17,5 +17,6 @@ router.get('/phases', phaseController.fetchPhases);
 
 router.get('/phases/:phaseId', phaseValidator.phaseParams, phaseController.fetchSinglePhase);
 
+router.post('/phases', phaseValidator.createPhase, phaseController.createPhase);
 
 export default router;

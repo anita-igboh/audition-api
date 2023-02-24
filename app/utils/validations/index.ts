@@ -2,6 +2,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { Error } from '../helpers/response.helpers';
 
+
+
 const dynamicValidator = async (schema: any, req: Request, type: string) => {
   const requestTypes: any = {
     body: req.body,
@@ -21,6 +23,7 @@ const baseValidator = async (
 ) => {
   try {
     await dynamicValidator(schema, req, type);
+    
     return next();
   } catch (error: any) {
     next(Error(error.message.replace(/["]/gi, ''), 400));
