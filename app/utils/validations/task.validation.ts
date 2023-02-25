@@ -9,3 +9,11 @@ export const createTask = (req: Request, res: Response, next: NextFunction): voi
     });
     baseValidator(schema, req, res, next, 'body');
   };
+
+  export const phaseTaskParams = (req: Request, res: Response, next: NextFunction): void => {
+    const schema = Joi.object({
+      phaseId: Joi.number().required(),
+      taskId: Joi.number().required(),
+    });
+    baseValidator(schema, req, res, next, 'params');
+  };

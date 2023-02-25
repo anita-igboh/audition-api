@@ -1,4 +1,5 @@
 import { IPhase } from '../interfaces/phase.interface';
+import { ITask } from '../interfaces/task.interface';
 import { Error } from '../utils/helpers/response.helpers';
 import { fetchSinglePhase } from './phase.services';
 
@@ -14,4 +15,14 @@ import { fetchSinglePhase } from './phase.services';
     });
     
     return phase;
+  };
+
+  export const fetchPhaseTask = (taskId: number, phaseId: number): ITask => {
+    const phase: IPhase = fetchSinglePhase(phaseId);
+    const task: ITask | undefined = phase.tasks.find((el: ITask) => el.taskId === Number(taskId));
+    if (!task) {
+      throw Error('Task not found', 404);
+    }
+
+    return task;
   };
