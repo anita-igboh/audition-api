@@ -69,4 +69,36 @@ describe('Tasks', () => {
             });
         });
     })
+
+    describe('Update task status', () => {
+        it('should update a phase task successfully', (done) => {
+          request(app)
+            .patch('/api/v1/phases/tasks/2/2')
+            .set('Accept', 'application/json')
+            .end((req, res) => {
+              expect(res.statusCode).to.be.equal(200);
+              expect(res.body.code).to.be.equal(200);
+              expect(res.body.status).to.be.equal('success');
+              expect(res.body.message).to.be.equal('Task updated successfully');
+              expect(res.body).to.have.property('data');
+              expect(res.body.data).to.have.property('taskId');
+              expect(res.body.data).to.have.property('taskName');
+              expect(res.body.data).to.have.property('isComplete');
+              done();
+            });
+        });
+
+        it('should not update a phase task if an invalid taskId is provided', (done) => {
+          request(app)
+            .patch('/api/v1/phases/tasks/2/a')
+            .set('Accept', 'application/json')
+            .end((req, res) => {
+              expect(res.statusCode).to.be.equal(400);
+              expect(res.body.code).to.be.equal(400);
+              expect(res.body.status).to.be.equal('error');
+              expect(res.body.message).to.be.equal('taskId must be a number');
+              done();
+            });
+        });
+      })
 });
