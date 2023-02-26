@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import logger from '../config/logger';
 import * as service from '../services/task.services';
 import { successResponse } from '../utils/helpers/response.helpers';
 
@@ -10,7 +11,9 @@ export const createTask = (req: Request, res: Response, next: NextFunction) => {
         
         return successResponse(res, 'Task added successfully to phase', 201, data);
     } catch (error) {
-        return next(error);
+      logger.error("createTask::taskController", error);
+
+      return next(error);
     }
 };
 
@@ -21,6 +24,8 @@ export const fetchPhaseTask = (req: Request, res: Response, next: NextFunction) 
       
       return successResponse(res, 'Task fetched successfully', 200, data);
     } catch (error) {
+      logger.error("fetchPhaseTask::taskController", error);
+
       return next(error);
     }
   };
@@ -32,6 +37,8 @@ export const fetchPhaseTask = (req: Request, res: Response, next: NextFunction) 
       
       return successResponse(res, 'Task updated successfully', 200, data);
     } catch (error) {
+      logger.error("updateTaskStatus::taskController", error);
+
       return next(error);
     }
   };
