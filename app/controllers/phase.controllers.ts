@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as service from '../services/phase.services';
 import { successResponse } from '../utils/helpers/response.helpers';
+import logger from '../config/logger';
 
 export const fetchPhases = (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -8,6 +9,8 @@ export const fetchPhases = (req: Request, res: Response, next: NextFunction) => 
     
     return successResponse(res, 'Phases fetched successfully', 200, data);
   } catch (error) {
+    logger.error("fetchPhases::phaseController", error);
+    
     return next(error);
   }
 };
@@ -19,6 +22,8 @@ export const fetchSinglePhase = (req: Request, res: Response, next: NextFunction
 
     return successResponse(res, 'Phase fetched successfully', 200, data);
   } catch (error) {
+    logger.error("fetchSinglePhase::phaseController", error);
+
     return next(error);
   }
 };
@@ -30,6 +35,8 @@ export const createPhase = (req: Request, res: Response, next: NextFunction) => 
 
     return successResponse(res, 'Phase created successfully', 201, data);
   } catch (error) {
+    logger.error("createPhase::phaseController", error);
+
     return next(error);
   }
 };

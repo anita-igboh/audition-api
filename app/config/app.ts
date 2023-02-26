@@ -4,13 +4,14 @@
 import cors from 'cors';
 import routes from '../routes/v1';
 import { Request, Response, NextFunction, Express } from 'express';
+import logger from './logger';
 
 const expressConfig = (app: Express) => {
   const env = app.get('env');
 
-  console.info('App is starting...');
-  console.info(`Environment is ${env}`);
-  console.info("Overriding 'Express' logger");
+  logger.info('App is starting...');
+  logger.info(`Environment is ${env}`);
+  logger.info("Overriding 'Express' logger");
 
   app.disable('x-powered-by');
   app.use(cors());
@@ -45,7 +46,7 @@ const expressConfig = (app: Express) => {
   if (app.get('env') === 'development' || app.get('env') === 'test') {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-      console.log(err);
+      logger.error(err);
       res.status(err.code || 500).json({
         status: err.status,
         code: err.code,
