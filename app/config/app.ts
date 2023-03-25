@@ -2,7 +2,7 @@
 /* eslint-disable function-paren-newline */
 /* eslint-disable implicit-arrow-linebreak */
 import cors from 'cors';
-import routes from '../routes/v1';
+import routes from '../api/express/routes/v1';
 import { Request, Response, NextFunction, Express } from 'express';
 import logger from './logger';
 

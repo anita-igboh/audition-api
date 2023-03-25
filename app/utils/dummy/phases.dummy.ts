@@ -1,5 +1,5 @@
-import PhaseStatus from "../../enums/phase.enums";
-import { IPhase } from "../../interfaces/phase.interface";
+import PhaseStatus from '../../enums/phase.enums';
+import { IPhase } from '../../interfaces/phase.interface';
 
 const phasesData: IPhase[] = [
   {
@@ -66,6 +66,6 @@ const phasesData: IPhase[] = [
       },
     ],
   },
-]
+];
 
 export default phasesData;

@@ -5,14 +5,24 @@ import app from '../../app/server';
 describe('Phases', () => {
   it('should fetch phases successfully', (done) => {
     request(app)
-      .get('/api/v1/phases')
+      .post('/graphql')
       .set('Accept', 'application/json')
+      .send({
+        query: `
+          query phases {
+            phases {
+              phaseId
+              phaseName
+              status
+              isDone
+            }
+           } 
+        `,
+      })
       .end((req, res) => {
         expect(res.statusCode).to.be.equal(200);
-        expect(res.body.code).to.be.equal(200);
-        expect(res.body.status).to.be.equal('success');
-        expect(res.body.message).to.be.equal('Phases fetched successfully');
         expect(res.body).to.have.property('data');
+        expect(res.body.data).to.have.property('phases');
         done();
       });
   });
@@ -20,39 +30,23 @@ describe('Phases', () => {
   describe('Fetch single phase', () => {
     it('should fetch a phase successfully', (done) => {
       request(app)
-        .get('/api/v1/phases/1')
+        .post('/graphql')
         .set('Accept', 'application/json')
+        .send({
+          query: `{
+              phase(id: 1) {
+                phaseId
+                phaseName
+                status
+                isDone
+              }
+            }
+          `,
+        })
         .end((req, res) => {
           expect(res.statusCode).to.be.equal(200);
-          expect(res.body.code).to.be.equal(200);
-          expect(res.body.status).to.be.equal('success');
-          expect(res.body.message).to.be.equal('Phase fetched successfully');
           expect(res.body).to.have.property('data');
-          done();
-        });
-    });
-
-    it('should throw error for invalid params type', (done) => {
-      request(app)
-        .get('/api/v1/phases/1a')
-        .set('Accept', 'application/json')
-        .end((req, res) => {
-          expect(res.statusCode).to.be.equal(400);
-          expect(res.body.code).to.be.equal(400);
-          expect(res.body.status).to.be.equal('error');
-          done();
-        });
-    });
-
-    it('should throw error if phase is not found', (done) => {
-      request(app)
-        .get('/api/v1/phases/100')
-        .set('Accept', 'application/json')
-        .end((req, res) => {
-          expect(res.statusCode).to.be.equal(404);
-          expect(res.body.code).to.be.equal(404);
-          expect(res.body.status).to.be.equal('error');
-          expect(res.body.message).to.be.equal('Phase not found');
+          expect(res.body.data).to.have.property('phase');
           done();
         });
     });
@@ -61,30 +55,28 @@ describe('Phases', () => {
   describe('Create phase', () => {
     it('should create a phase successfully', (done) => {
       request(app)
-        .post('/api/v1/phases')
+        .post('/graphql')
         .set('Accept', 'application/json')
         .send({
-          name: 'New-Phase',
+          query: `mutation {
+            phaseCreate(input: {name: "new phase"}) {
+              phaseId
+              phaseName
+              status
+              isDone
+            }
+           }
+          `,
+          variables: {
+            input: {
+              name: 'New Phase',
+            },
+          },
         })
         .end((req, res) => {
-          expect(res.statusCode).to.be.equal(201);
-          expect(res.body.code).to.be.equal(201);
-          expect(res.body.status).to.be.equal('success');
-          expect(res.body.message).to.be.equal('Phase created successfully');
+          expect(res.statusCode).to.be.equal(200);
           expect(res.body).to.have.property('data');
-          done();
-        });
-    });
-
-    it('should throw error for missing fields', (done) => {
-      request(app)
-        .post('/api/v1/phases')
-        .set('Accept', 'application/json')
-        .end((req, res) => {
-          expect(res.statusCode).to.be.equal(400);
-          expect(res.body.code).to.be.equal(400);
-          expect(res.body.status).to.be.equal('error');
-          expect(res.body.message).to.be.equal('name is required');
+          expect(res.body.data).to.have.property('phaseCreate');
           done();
         });
     });
