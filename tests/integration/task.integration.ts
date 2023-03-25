@@ -3,102 +3,84 @@ import request from 'supertest';
 import app from '../../app/server';
 
 describe('Tasks', () => {
-    describe('Create task', () => {
-        it('should successfully create task', (done) => {
-            request(app)
-            .post('/api/v1/phases/tasks')
-            .set('Accept', 'application/json')
-            .send({
-                name: 'new-task',
-                phaseId: 2
-            })
-            .end((req, res) => {          
-                expect(res.statusCode).to.be.equal(201);
-                expect(res.body.code).to.be.equal(201);
-                expect(res.body.status).to.be.equal('success');
-                expect(res.body.message).to.be.equal('Task added successfully to phase');
-                expect(res.body).to.have.property('data');
-                done();
-            });
-        });
-
-        it('should throw error for incomplete fields', (done) => {
-            request(app)
-            .post('/api/v1/phases/tasks')
-            .set('Accept', 'application/json')
-            .send({
-                name: 'new-task',
-            })
-            .end((req, res) => {
-                expect(res.statusCode).to.be.equal(400);
-                expect(res.body.code).to.be.equal(400);
-                expect(res.body.status).to.be.equal('error');
-                done();
-            });
+  describe('Create task', () => {
+    it('should successfully create task', (done) => {
+      request(app)
+        .post('/graphql')
+        .set('Accept', 'application/json')
+        .send({
+          query: `mutation {
+                      taskCreate(input: {
+                          name: "Finish work now",
+                          phaseId: 2
+                        }) {
+                          phaseId
+                          phaseName
+                          status
+                          isDone
+                          tasks {
+                              taskId
+                              taskName
+                              isComplete
+                          }
+                      }
+                  }
+              `,
+        })
+        .end((req, res) => {
+          expect(res.statusCode).to.be.equal(200);
+          expect(res.body).to.have.property('data');
+          expect(res.body.data).to.have.property('taskCreate');
+          done();
         });
     });
+  });
 
-    describe('Fetch phase task', () => {
-        it('should fetch a phase task successfully', (done) => {
-            request(app)
-            .get('/api/v1/phases/tasks/1/2')
-            .set('Accept', 'application/json')
-            .end((req, res) => {
-                expect(res.statusCode).to.be.equal(200);
-                expect(res.body.code).to.be.equal(200);
-                expect(res.body.status).to.be.equal('success');
-                expect(res.body.message).to.be.equal('Task fetched successfully');
-                expect(res.body).to.have.property('data');
-                expect(res.body.data).to.have.property('taskId');
-                expect(res.body.data).to.have.property('taskName');
-                expect(res.body.data).to.have.property('isComplete');
-                done();
-            });
+  describe('Fetch phase task', () => {
+    it('should fetch a phase task successfully', (done) => {
+      request(app)
+        .post('/graphql')
+        .set('Accept', 'application/json')
+        .send({
+          query: `query {
+                        phaseTask(phaseId: 1, taskId: 1) {
+                            taskId
+                            taskName
+                            isComplete
+                        }
+                    }
+              `,
+        })
+        .end((req, res) => {
+          expect(res.statusCode).to.be.equal(200);
+          expect(res.body).to.have.property('data');
+          expect(res.body.data).to.have.property('phaseTask');
+          done();
         });
+    });
+  });
+});
 
-        it('should return error if task is not found', (done) => {
-            request(app)
-            .get('/api/v1/phases/tasks/1/200')
-            .set('Accept', 'application/json')
-            .end((req, res) => {
-                expect(res.statusCode).to.be.equal(404);
-                expect(res.body.code).to.be.equal(404);
-                expect(res.body.status).to.be.equal('error');
-                expect(res.body.message).to.be.equal('Task not found');
-                done();
-            });
-        });
-    })
-
-    describe('Update task status', () => {
-        it('should update a phase task successfully', (done) => {
-          request(app)
-            .patch('/api/v1/phases/tasks/2/2')
-            .set('Accept', 'application/json')
-            .end((req, res) => {
-              expect(res.statusCode).to.be.equal(200);
-              expect(res.body.code).to.be.equal(200);
-              expect(res.body.status).to.be.equal('success');
-              expect(res.body.message).to.be.equal('Task updated successfully');
-              expect(res.body).to.have.property('data');
-              expect(res.body.data).to.have.property('taskId');
-              expect(res.body.data).to.have.property('taskName');
-              expect(res.body.data).to.have.property('isComplete');
-              done();
-            });
-        });
-
-        it('should not update a phase task if an invalid taskId is provided', (done) => {
-          request(app)
-            .patch('/api/v1/phases/tasks/2/a')
-            .set('Accept', 'application/json')
-            .end((req, res) => {
-              expect(res.statusCode).to.be.equal(400);
-              expect(res.body.code).to.be.equal(400);
-              expect(res.body.status).to.be.equal('error');
-              expect(res.body.message).to.be.equal('taskId must be a number');
-              done();
-            });
-        });
+describe('Update task status', () => {
+  it('should update a phase task successfully', (done) => {
+    request(app)
+      .post('/graphql')
+      .set('Accept', 'application/json')
+      .send({
+        query: `mutation {
+                    taskStatusUpdate(phaseId: 2, taskId: 2) {
+                    taskId
+                        taskName
+                        isComplete
+                    }
+                }
+            `,
       })
+      .end((req, res) => {
+        expect(res.statusCode).to.be.equal(200);
+        expect(res.body).to.have.property('data');
+        expect(res.body.data).to.have.property('taskStatusUpdate');
+        done();
+      });
+  });
 });

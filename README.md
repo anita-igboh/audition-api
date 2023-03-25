@@ -6,6 +6,7 @@ A simple application that documents the progress of a startup
 
 - Node.js
 - Typescript
+- GraphQL
 - Git
 - Express
 - Mocha, chai and supertest
